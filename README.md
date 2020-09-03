@@ -1,151 +1,94 @@
-##Elastic-Job - distributed scheduled job solution
+# [ElasticJob - distributed scheduled job solution](http://shardingsphere.apache.org/elasticjob/)
 
-# [中文主页](README_cn.md) 
-  
-# [原1.x版本文档](README_1.x.md)
+**Official website: https://shardingsphere.apache.org/elasticjob/**
 
-[![Build Status](https://secure.travis-ci.org/dangdangdotcom/elastic-job.png?branch=master)](https://travis-ci.org/dangdangdotcom/elastic-job)
+[![Stargazers over time](https://starchart.cc/apache/shardingsphere-elasticjob.svg)](https://starchart.cc/apache/shardingsphere-elasticjob)
+
+ElasticJob is a distributed scheduling solution consisting of two separate projects, ElasticJob-Lite and ElasticJob-Cloud.
+
+Through the functions of flexible scheduling, resource management and job management, 
+it creates a distributed scheduling solution suitable for Internet scenarios, 
+and provides a diversified job ecosystem through open architecture design.
+It uses a unified job API for each project.
+Developers only need code one time and can deploy at will.
+
+ElasticJob became an [Apache ShardingSphere](https://shardingsphere.apache.org/) Sub-project on May 28 2020.
+
+Welcome communicate with community via [mail list](mailto:dev@shardingsphere.apache.org).
+
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+
+[![GitHub release](https://img.shields.io/github/release/apache/shardingsphere-elasticjob.svg)](https://github.com/apache/shardingsphere-elasticjob/releases)
+
 [![Maven Status](https://maven-badges.herokuapp.com/maven-central/com.dangdang/elastic-job/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.dangdang/elastic-job)
-[![Coverage Status](https://coveralls.io/repos/dangdangdotcom/elastic-job/badge.svg?branch=master&service=github)](https://coveralls.io/github/dangdangdotcom/elastic-job?branch=master)
-[![GitHub release](https://img.shields.io/github/release/dangdangdotcom/elastic-job.svg)](https://github.com/dangdangdotcom/elastic-job/releases)
-[![Hex.pm](http://dangdangdotcom.github.io/elastic-job/img/license.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![Build Status](https://secure.travis-ci.org/apache/shardingsphere-elasticjob.png?branch=master)](https://travis-ci.org/apache/shardingsphere-elasticjob)
+[![Coverage Status](https://coveralls.io/repos/github/apache/shardingsphere-elasticjob/badge.svg?branch=master)](https://coveralls.io/github/apache/shardingsphere-elasticjob?branch=master)
 
-# Overview
+## Introduction
 
-Elastic-Job is a distributed scheduled job solution. Elastic-Job is composited from 2 independent sub projects: Elastic-Job-Lite and Elastic-Job-Cloud.
+Using ElasticJob can make developers no longer worry about the non functional requirements such as jobs scale out, so that they can focus more on business coding;
+At the same time, it can release operators too, so that they do not have to worry about jobs high availability and management, and can automatic operation by simply adding servers.
 
-Elastic-Job-Lite is a centre-less solution, use lightweight jar to coordinate distributed jobs.
-Elastic-Job-Cloud is a Mesos framework which use Mesos + Docker(todo) to manage and isolate resources and processes.
+### ElasticJob-Lite
 
-Elastic-Job-Lite and Elastic-Job-Cloud provide unified API. Developers only need code one time, then decide to deploy Lite or Cloud as you want.
+A lightweight, decentralized solution that provides distributed task sharding services.
 
-# Features
+![ElasticJob-Lite Architecture](https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_lite.png)
 
-## 1. Elastic-Job-Lite
+### ElasticJob-Cloud
 
-* Distributed schedule job coordinate
-* Elastic scale in and scale out supported
-* Failover
-* Misfired jobs refire
-* Sharding consistently, same sharding item for a job only one running instance
-* Parallel scheduling supported
-* Job lifecycle operation
-* Lavish job types
-* Spring integrated and namespace supported
-* Web console
+Uses Mesos to manage and isolate resources.
 
-## 2. Elastic-Job-Cloud
-* All Elastic-Job-Lite features included
-* Application distributed automatically
-* Fenzo based resources allocated elastically
-* Docker based processes isolation support (TBD)
+![ElasticJob-Cloud Architecture](https://shardingsphere.apache.org/elasticjob/current/img/architecture/elasticjob_cloud.png)
 
-***
+|                   | *ElasticJob-Lite* | *ElasticJob-Cloud* |
+| ----------------- | ----------------- | ------------------ |
+| Decentralization  | Yes               | No                 |
+| Resource Assign   | No                | Yes                |
+| Job Execution     | Daemon            | Daemon + Transient |
+| Deploy Dependency | ZooKeeper         | ZooKeeper + Mesos  |
 
-# [Roadmap](ROADMAP.md)
+## Features
 
-# [Release Notes](http://dangdangdotcom.github.io/elastic-job/post/release_notes/)
+- Elastic Schedule
+  - Support job sharding and high availability in distributed system
+  - Scale out for throughput and efficiency improvement
+  - Job processing capacity is flexible and scalable with the allocation of resources
 
-# Architecture
+- Resource Assign
+  - Execute job on suitable time and assigned resources
+  - Aggregation same job to same job executor
+  - Append resources to newly assigned jobs dynamically
 
-## Elastic-ob-Lite
+- Job Governance
+  - Failover
+  - Misfired
+  - Self diagnose and recover when distribute environment unstable
 
-![Elastic-Job-Lite Architecture](elastic-job-doc/content/img/architecture/elastic_job_lite.png)
-***
+- Job Dependency (TODO)
+  - DAG based job dependency
+  - DAG based job item dependency
 
-## Elastic-Job-Cloud
+- Job Open Ecosystem
+  - Unify job api for extension
+  - Support rich job type lib, such as dataflow, script, HTTP, file, big data
+  - Focus business SDK, can work with Spring IOC
 
-![Elastic-Job-Cloud Architecture](elastic-job-doc/content/img/architecture/elastic_job_cloud.png)
+- [Admin Console](https://github.com/apache/shardingsphere-elasticjob-ui)
+  - Job administration
+  - Job event trace query
+  - Registry center management
 
-# Quick Start
+## Environment Required
 
-## Elastic-Job-Lite
+### Java
 
-### Add maven dependency
+Java 8 or above required.
 
-```xml
-<!-- import elastic-job lite core -->
-<dependency>
-    <groupId>com.dangdang</groupId>
-    <artifactId>elastic-job-lite-core</artifactId>
-    <version>${lasted.release.version}</version>
-</dependency>
+### ZooKeeper
 
-<!-- import other module if need -->
-<dependency>
-    <groupId>com.dangdang</groupId>
-    <artifactId>elastic-job-lite-spring</artifactId>
-    <version>${lasted.release.version}</version>
-</dependency>
-```
-### Job development
+ZooKeeper 3.6.0 or above required. [See details](https://zookeeper.apache.org/)
 
-```java
-public class MyElasticJob implements SimpleJob {
-    
-    @Override
-    public void execute(ShardingContext context) {
-        switch (context.getShardingItem()) {
-            case 0: 
-                // do something by sharding item 0
-                break;
-            case 1: 
-                // do something by sharding item 1
-                break;
-            case 2: 
-                // do something by sharding item 2
-                break;
-            // case n: ...
-        }
-    }
-}
-```
+### Mesos (ElasticJob-Cloud only)
 
-### Job configuration
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
-    xmlns:job="http://www.dangdang.com/schema/ddframe/job"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-                        http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://www.dangdang.com/schema/ddframe/reg
-                        http://www.dangdang.com/schema/ddframe/reg/reg.xsd
-                        http://www.dangdang.com/schema/ddframe/job
-                        http://www.dangdang.com/schema/ddframe/job/job.xsd
-                        ">
-    <!--configure registry center -->
-    <reg:zookeeper id="regCenter" server-lists="yourhost:2181" namespace="dd-job" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3" />
-
-    <!--configure job -->
-    <job:simple id="myElasticJob" class="xxx.MyElasticJob" registry-center-ref="regCenter" cron="0/10 * * * * ?"   sharding-total-count="3" sharding-item-parameters="0=A,1=B,2=C" />
-</beans>
-```
-
-***
-
-## Elastic-Job-Cloud
-
-### Add maven dependency
-
-```xml
-<!-- import elastic-job cloud executor -->
-<dependency>
-    <groupId>com.dangdang</groupId>
-    <artifactId>elastic-job-cloud-executor</artifactId>
-    <version>${lasted.release.version}</version>
-</dependency>
-```
-### Job development
-
-Same with `Elastic-Job-Lite`
-
-### Job configuration
-
-```shell
-curl -l -H "Content-type: application/json" -X POST -d 
-'{"jobName":"foo_job","jobClass":"yourJobClass","jobType":"SIMPLE","jobExecutionType":"TRANSIENT","cron":"0/5 * * * * ?","shardingTotalCount":5,"cpuCount":0.1,"memoryMB":64.0,"appURL":"http://app_host:8080/foo-job.tar.gz","failover":true,"misfire":true,"bootstrapScript":"bin/start.sh"}' 
-http://elastic_job_cloud_host:8899/job/register
-```
+Mesos 1.1.0 or compatible version required (For ElasticJob-Cloud only). [See details](https://mesos.apache.org/)

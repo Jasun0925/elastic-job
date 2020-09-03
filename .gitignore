@@ -4,7 +4,6 @@ target/
 *.war
 *.zip
 *.tar
-*.tar.gz
 
 # eclipse ignore
 .settings/
@@ -29,3 +28,5 @@ logs/
 # system ignore
 .DS_Store
 Thumbs.db
+
+public/
